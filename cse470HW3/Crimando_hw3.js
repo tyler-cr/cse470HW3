@@ -1,20 +1,11 @@
-let s = 1.5
-let r = s / Math.sqrt(3)
-
-var van = vec3(r, 0, -s/2)
-var vbn = vec3(-r/2,  s/2, -s/2)
-var vcn = vec3(-r/2, -s/2, -s/2)
-
-var vdn = vec3(r, 0,  s/2)
-var ven = vec3(-r/2,  s/2,  s/2)
-var vfn = vec3(-r/2, -s/2,  s/2)
-
-
 var canvas;
 var gl;
 
 // sphere definition
 var numTimesToSubdivide = 2;
+
+pointsArray2 = cylinder2.points
+indicesArray2 = cylinder2.indices
 
 pointsArray = cylinder
 normalsArray = cylinder
@@ -93,8 +84,8 @@ var vd = vec3(-0.5, -0.5, 0.5);
     
 
 // light position is defined in eye coordinates
-var lightPosition = vec4(3.0, 3.0, 5, 1.0 );
-//var lightPosition = vec4(0.0, 0.0, 0.0, 1.0 );
+//var lightPosition = vec4(3.0, 3.0, 5, 1.0 );
+var lightPosition = vec4(0.0, 0.0, 0.0, 1.0 );
 //var lightPosition = vec4(10.0, 0.0, 0.0, 1.0 );
 
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0 );
@@ -103,68 +94,25 @@ var lightSpecular = vec4( 1.0, 1.0, 1.0, 1.0 );
 
 // gold-yellow material
 
-var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
-var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
-var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
-var materialShininess = 100.0;
+// var materialAmbient = vec4( 1.0, 0.0, 1.0, 1.0 );
+// var materialDiffuse = vec4( 1.0, 0.8, 0.0, 1.0 );
+// var materialSpecular = vec4( 1.0, 0.8, 0.0, 1.0 );
+// var materialShininess = 100.0;
 
 
 // red material; try changing light color
-/*
+
 var materialAmbient = vec4( 1.0, 0.0, 0.0, 1.0 );
 var materialDiffuse = vec4( 0.3, 0.0, 0.0, 1.0 );
 var materialSpecular = vec4( 1.0, 0.0, 0.0, 1.0 );
 var materialShininess = 10.0; 
-*/
+
 
 var ambientColor, diffuseColor, specularColor;
 
 var modelViewMatrix, projectionMatrix;
 var modelViewMatrixLoc, projectionMatrixLoc;
 
-// ======================== sphere definition functions
-function triangle(a, b, c) {
-
-     normalsArray.push(a);
-     normalsArray.push(b);
-     normalsArray.push(c);
-     
-     pointsArray.push(a);
-     pointsArray.push(b);      
-     pointsArray.push(c);
-
-     numVertices += 3;
-}
-
-
-function divideTriangle(a, b, c, count) {
-    if ( count > 0 ) {
-                
-        var ab = mix( a, b, 0.5);
-        var ac = mix( a, c, 0.5);
-        var bc = mix( b, c, 0.5);
-                
-        ab = normalize(ab, false);
-        ac = normalize(ac, false);
-        bc = normalize(bc, false);
-                                
-        divideTriangle( a, ab, ac, count - 1 );
-        divideTriangle( ab, b, bc, count - 1 );
-        divideTriangle( bc, c, ac, count - 1 );
-        divideTriangle( ab, bc, ac, count - 1 );
-    }
-    else { 
-        triangle( a, b, c );
-    }
-}
-
-
-function tetrahedron(a, b, c, d, n) {
-    divideTriangle(a, b, c, n);
-    divideTriangle(d, c, b, n);
-    divideTriangle(a, d, b, n);
-    divideTriangle(a, c, d, n);
-}
 
 // ==================== run program
 
@@ -193,9 +141,6 @@ window.onload = function init() {
     specularProduct = mult(lightSpecular, materialSpecular);
 	
 	console.log("ambient product = ",ambientProduct);
-
-    
-    //HERE ORIGINALLY: tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
 	
 
 
@@ -221,6 +166,8 @@ window.onload = function init() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
     
+	//gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indicesArray), gl.STATIC_DRAW)	
+
     var vPosition = gl.getAttribLocation( program, "vPosition");
     gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
@@ -278,6 +225,8 @@ function render() {
         gl.drawArrays( gl.TRIANGLES, i, 3 );
 
     window.requestAnimFrame(render);
+
+	gl.drawElements( gl.TRIANGLES, indicesArray2.length, gl.UNSIGNED_SHORT, 0);
 }
 
 
