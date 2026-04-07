@@ -108,7 +108,8 @@ void main()
 	fColor.a = 1.0;
 	 
 
-    gl_FragColor = fColor;
+	gl_FragColor = fColor;
+	//gl_FragColor = vec4(normalize(N) * 0.5 + 0.5, 1.0); //for debugging
 }
 </script>
 
@@ -165,6 +166,11 @@ Change number of edges:
 <div>
 Material Shininess
 		1<input type="range" id="shininess" name="shininess" min="1" max="1000" value="100">1000
+</div>
+
+<div>
+Rotate Light Around shape
+		<input type="checkbox" name="rotate" id="rotate">
 </div>
 </body>
 </html>

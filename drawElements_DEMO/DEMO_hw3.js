@@ -21,6 +21,8 @@ var pointsArray;
 var indicesArray;
 var normalsArray;
 
+var rotateBool = false;
+
 // eye location and parameters to move
 var viewer =
 {
@@ -65,6 +67,18 @@ var specularProduct;
 var modelViewMatrix;
 var projectionMatrix;
 
+let lightAngle = 0
+
+function rotateLight() {
+    lightAngle += 1;
+    lightPosition = vec4(
+        3 * Math.sin(radians(lightAngle)),
+        0,
+        3 * Math.cos(radians(lightAngle)),
+        1.0
+    );
+}
+
 window.onload = function init() {
     pointsArray = cylinder2.points;
     indicesArray = cylinder2.indices;
@@ -97,6 +111,7 @@ window.onload = function init() {
     modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
     projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 
+    //TODO: change to perspective
     projectionMatrix = ortho(left, right, bottom, ytop, near, far);
     gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
@@ -111,7 +126,9 @@ function setupUI() {
     
     let materialPicker = document.getElementById("materials");
     shapeSelected = document.getElementById("shapes")
+    let shinySlider = document.getElementById("shininess");
 
+    let lightRotate = document.getElementById();
 
     if (materialPicker) {
         materialPicker.addEventListener("change", function(event) {
@@ -125,10 +142,11 @@ function setupUI() {
             materialDiffuse = curMaterial.diffuse;
             materialSpecular = curMaterial.specular;
             materialShininess = curMaterial.shininess;
+
+            shinySlider.value = materialShininess
         });
     }
 
-    let shinySlider = document.getElementById("shininess");
     if (shinySlider) {
         shinySlider.addEventListener("input", function() {
             materialShininess = this.value;
@@ -189,6 +207,10 @@ function updateGeometry() {
 }
 
 function render() {
+
+    rotateLight()
+    //console.log(lightPosition)
+
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     ambientProduct = mult(lightAmbient, materialAmbient);
